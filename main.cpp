@@ -198,28 +198,36 @@ int main()
     // Создаем кнопку "назад"
     RectangleShape buttonToBack(Vector2f(170, 30));
     buttonToBack.setFillColor(Color(192, 192, 192)); //цвет фона кнопки
-    buttonToBack.setPosition(100, 100); // Позиция кнопки по центру
+    buttonToBack.setPosition(100, 140); // Позиция кнопки по центру
 
     // Создаем текст кнопки "назад"
-    Text buttonToBackText(L"Назад", font, 14);
+    Text buttonToBackText(L"Назад", font, 16);
     buttonToBackText.setFillColor(Color::Black); // Цвет текста
-    buttonToBackText.setPosition(145, 105); // Позиция текста по центру кнопки
+    buttonToBackText.setPosition(160, 143); // Позиция текста по центру кнопки
 
     //Создаём текст увы, тут никого нет
     Text notFoundedText(L"Увы, здесь никого нет!", font, 20);
     notFoundedText.setFillColor(Color::Red); // Цвет текста
     notFoundedText.setPosition(50, 610); // Позиция текста 
-    
+
     //Создаём текст Поздравляем вы нашли далматинца
     Text FoundedText(L"Поздравляем! Вы нашли далматинца!", font, 20);
     FoundedText.setFillColor(Color::Green); // Цвет текста
     FoundedText.setPosition(50, 610); // Позиция текста 
+    // Создаем кнопку "Ввести ->"
+    RectangleShape buttonEnter(Vector2f(30, 30));
+    buttonEnter.setFillColor(Color::Yellow); //цвет фона кнопки
+    buttonEnter.setPosition(270, 70); // Позиция кнопки по центру
+
+    // Создаем текст кнопки "Ввести ->"
+    Text buttonEnterText(L"->", font, 17);
+    buttonEnterText.setFillColor(Color::Black); // Цвет текста
+    buttonEnterText.setPosition(280, 72); // Позиция текста по центру кнопки
 
 
 
     // Переменные для отслеживания текущего состояния игры
     bool isGameStarted = false;
-
     Level LVL4;
     Place cage = true;
     int place = 0;
@@ -290,14 +298,38 @@ int main()
                                             }
                                             windowHint.clear(Color::White);
                                             windowHint.draw(hintText);
-                                            windowHint.draw(buttonToBackText);
                                             windowHint.draw(buttonToBack);
+                                            windowHint.draw(buttonToBackText);
                                             windowHint.display();
+                                        }
+                                    }
+                                    else if (buttonInputCode.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
+                                        RenderWindow windowInputCode(VideoMode(400, 200), "Введите код!");
+                                        while (windowInputCode.isOpen()) {
+                                            Event hintEvent;
+                                            while (windowInputCode.pollEvent(hintEvent)) {
+                                                if (hintEvent.type == Event::Closed) {
+                                                    windowInputCode.close();
+                                                }
+                                                // Проверка нажатия на кнопку возврата
+                                                if (hintEvent.type == Event::MouseButtonPressed && hintEvent.mouseButton.button == Mouse::Left) {
+                                                    Vector2i hintMousePos = Mouse::getPosition(windowInputCode); // Получаем позицию мыши для подсказки
+                                                    if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(hintMousePos))) {
+                                                        windowInputCode.close();
+                                                    }
+                                                }
+                                            }
+                                            windowInputCode.clear(Color::White);
+                                            windowInputCode.draw(hintText);
+                                            windowInputCode.draw(buttonToBack);
+                                            windowInputCode.draw(buttonToBackText);
+                                            windowInputCode.draw(buttonEnter);
+                                            windowInputCode.draw(buttonEnterText);
+                                            windowInputCode.display();
                                         }
                                     }
                                 }
                             }
-
                             // Отрисовка основного окна вопроса
                             windowQUESTION.clear(Color::White);
                             windowQUESTION.draw(buttonHint);
@@ -318,13 +350,14 @@ int main()
                         }
                     }
                     // Проверка нажатия кнопки "Коробки"
+                    if (buttonShapeBarrel.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
+                        place = 2;
+                    }
+                    // Проверка нажатия кнопки "Коробки"
                     if (buttonShapeBox.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
                         place = 2;
                     }
-                    // Проверка нажатия кнопки "Бочки"
-                    if (buttonShapeBarrel.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
-                        place = 3;
-                    }
+
                     window.display();
                 }
             }
@@ -371,7 +404,7 @@ int main()
             window.draw(FoundedText);
             window.draw(ShapeAnswerCage);
         }
-        else if (place == 2||place ==3)
+        else if (place == 2)
         {
             window.clear();
             window.draw(spriteLevel);
@@ -380,7 +413,7 @@ int main()
             window.draw(buttonShapeBarrel);
             window.draw(buttonShapeBox);
         }
-        
+
         window.display();
     }
 
