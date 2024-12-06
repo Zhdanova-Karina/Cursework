@@ -223,7 +223,20 @@ int main()
     Text buttonEnterText(L"->", font, 17);
     buttonEnterText.setFillColor(Color::Black); // Цвет текста
     buttonEnterText.setPosition(280, 72); // Позиция текста по центру кнопки
+    // 2. Создание текстового поля
+    RectangleShape inputBox(Vector2f(170, 30)); // Размеры поля
+    inputBox.setFillColor(Color::White);
+    inputBox.setOutlineThickness(1);
+    inputBox.setOutlineColor(Color::Black);
+    inputBox.setPosition(100, 70); // Позиция поля ввода
 
+    // 3. Создание текстового объекта для отображения введенного текста
+    Text inputText("", font, 14); // Крупный шрифт
+    inputText.setFillColor(Color::Black);
+    inputText.setPosition(120, 72); // Позиция текста внутри поля
+
+    std::string inputString; // Логика хранения вводимого текста
+    bool isInputActive = false; // Флаг для определения состояния ввода
 
 
     // Переменные для отслеживания текущего состояния игры
@@ -232,6 +245,7 @@ int main()
     Place cage = true;
     int place = 0;
     bool dalmatianFound = false;
+    bool questionWindowOpened = false; // Флаг для отслеживания открытия окна с вопросом
     int currentHistoryPage = 0; // Переменная для отслеживания текущей страницы истории
     while (window.isOpen())
     {
@@ -266,78 +280,107 @@ int main()
                     }
                     // Проверка нажатия кнопки "Клетка"
                     if (buttonShapeCage.getGlobalBounds().contains(mousePos)) {
-                        RenderWindow windowQUESTION(VideoMode(400, 200), "На клетке замок! Нужен код!");
-                        while (windowQUESTION.isOpen()) {
-                            Event event;
-                            while (windowQUESTION.pollEvent(event)) {
-                                if (event.type == Event::Closed) {
-                                    windowQUESTION.close();
-                                }
+                        if (!questionWindowOpened) {
+                            questionWindowOpened = true; // Устанавливаем флаг, что окно открыто
+                            RenderWindow windowQUESTION(VideoMode(400, 200), "На клетке замок! Нужен код!");
+                            while (windowQUESTION.isOpen()) {
+                                Event event;
+                                while (windowQUESTION.pollEvent(event)) {
+                                    if (event.type == Event::Closed) {
+                                        windowQUESTION.close();
+                                    }
 
-                                // Проверка нажатия мыши в окне вопроса
-                                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-                                    Vector2i mousePos = Mouse::getPosition(windowQUESTION); // Получаем позицию мыши
+                                    // Проверка нажатия мыши в окне вопроса
+                                    if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                                        Vector2i mousePos = Mouse::getPosition(windowQUESTION); // Получаем позицию мыши
 
-                                    // Проверяем, нажата ли кнопка buttonHint
-                                    if (buttonHint.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
-                                        RenderWindow windowHint(VideoMode(400, 200), "Подсказка!");
-                                        while (windowHint.isOpen()) {
-                                            Event hintEvent;
-                                            while (windowHint.pollEvent(hintEvent)) {
-                                                if (hintEvent.type == Event::Closed) {
-                                                    windowHint.close();
-                                                }
-
-                                                // Проверка нажатия на кнопку возврата
-                                                if (hintEvent.type == Event::MouseButtonPressed && hintEvent.mouseButton.button == Mouse::Left) {
-                                                    Vector2i hintMousePos = Mouse::getPosition(windowHint); // Получаем позицию мыши для подсказки
-                                                    if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(hintMousePos))) {
+                                        // Проверяем, нажата ли кнопка buttonHint
+                                        if (buttonHint.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
+                                            RenderWindow windowHint(VideoMode(400, 200), "Подсказка!");
+                                            while (windowHint.isOpen()) {
+                                                Event hintEvent;
+                                                while (windowHint.pollEvent(hintEvent)) {
+                                                    if (hintEvent.type == Event::Closed) {
                                                         windowHint.close();
                                                     }
-                                                }
-                                            }
-                                            windowHint.clear(Color::White);
-                                            windowHint.draw(hintText);
-                                            windowHint.draw(buttonToBack);
-                                            windowHint.draw(buttonToBackText);
-                                            windowHint.display();
-                                        }
-                                    }
-                                    else if (buttonInputCode.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
-                                        RenderWindow windowInputCode(VideoMode(400, 200), "Введите код!");
-                                        while (windowInputCode.isOpen()) {
-                                            Event hintEvent;
-                                            while (windowInputCode.pollEvent(hintEvent)) {
-                                                if (hintEvent.type == Event::Closed) {
-                                                    windowInputCode.close();
-                                                }
-                                                // Проверка нажатия на кнопку возврата
-                                                if (hintEvent.type == Event::MouseButtonPressed && hintEvent.mouseButton.button == Mouse::Left) {
-                                                    Vector2i hintMousePos = Mouse::getPosition(windowInputCode); // Получаем позицию мыши для подсказки
-                                                    if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(hintMousePos))) {
-                                                        windowInputCode.close();
+
+                                                    // Проверка нажатия на кнопку возврата
+                                                    if (hintEvent.type == Event::MouseButtonPressed && hintEvent.mouseButton.button == Mouse::Left) {
+                                                        Vector2i hintMousePos = Mouse::getPosition(windowHint); // Получаем позицию мыши для подсказки
+                                                        if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(hintMousePos))) {
+                                                            windowHint.close();
+                                                        }
                                                     }
                                                 }
+                                                windowHint.clear(Color::White);
+                                                windowHint.draw(hintText);
+                                                windowHint.draw(buttonToBack);
+                                                windowHint.draw(buttonToBackText);
+                                                windowHint.display();
                                             }
-                                            windowInputCode.clear(Color::White);
-                                            windowInputCode.draw(hintText);
-                                            windowInputCode.draw(buttonToBack);
-                                            windowInputCode.draw(buttonToBackText);
-                                            windowInputCode.draw(buttonEnter);
-                                            windowInputCode.draw(buttonEnterText);
-                                            windowInputCode.display();
+                                        }
+                                        else if (buttonInputCode.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
+                                            RenderWindow windowInputCode(VideoMode(400, 200), "Введите код!");
+                                            while (windowInputCode.isOpen()) {
+                                                Event hintEvent;
+                                                while (windowInputCode.pollEvent(hintEvent)) {
+                                                    if (hintEvent.type == Event::Closed) {
+                                                        windowInputCode.close();
+                                                    }
+                                                    // Проверка нажатия на кнопку возврата
+                                                    if (hintEvent.type == Event::MouseButtonPressed && hintEvent.mouseButton.button == Mouse::Left) {
+                                                        Vector2i hintMousePos = Mouse::getPosition(windowInputCode); // Получаем позицию мыши для подсказки
+                                                        if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(hintMousePos))) {
+                                                            windowInputCode.close();
+                                                        }
+                                                    }
+                                                    else  if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                                                        // Проверка, находится ли курсор в пределах inputBox
+                                                        if (inputBox.getGlobalBounds().contains(static_cast<Vector2f>(Mouse::getPosition(window)))) {
+                                                            isInputActive = true; // Активируем поле ввода
+                                                        }
+                                                        else {
+                                                            isInputActive = false; // Деактивируем, если кликнули вне
+                                                        }
+                                                    }
+
+                                                    if (isInputActive) {
+                                                            if (event.type == Event::TextEntered) {
+                                                                // Если вводимый символ не является Backspace
+                                                                if (event.text.unicode < 128) { // Проверяем на ASCII
+                                                                    if (event.text.unicode == '\b') { // Обработка Backspace
+                                                                        if (!inputString.empty())
+                                                                            inputString.pop_back(); // Удаляем последний символ
+                                                                    }
+                                                                    else {
+                                                                        inputString += static_cast<char>(event.text.unicode); // Добавление символа
+                                                                    }
+                                                                }
+                                                                inputText.setString(inputString); // Обновляем текст
+                                                            }
+                                                        }
+                                                }
+                                                windowInputCode.clear(Color::White);
+                                                windowInputCode.draw(buttonToBack);
+                                                windowInputCode.draw(buttonToBackText);
+                                                windowInputCode.draw(buttonEnter);
+                                                windowInputCode.draw(buttonEnterText);
+                                                windowInputCode.draw(inputBox); // Поле ввода
+                                                windowInputCode.draw(inputText); // Отображаемый текст
+                                                windowInputCode.display();
+                                            }
                                         }
                                     }
                                 }
+                                // Отрисовка основного окна вопроса
+                                windowQUESTION.clear(Color::White);
+                                windowQUESTION.draw(buttonHint);
+                                windowQUESTION.draw(buttonHintText);
+                                windowQUESTION.draw(codeText);
+                                windowQUESTION.draw(buttonInputCode);
+                                windowQUESTION.draw(buttonInputCodeText);
+                                windowQUESTION.display();
                             }
-                            // Отрисовка основного окна вопроса
-                            windowQUESTION.clear(Color::White);
-                            windowQUESTION.draw(buttonHint);
-                            windowQUESTION.draw(buttonHintText);
-                            windowQUESTION.draw(codeText);
-                            windowQUESTION.draw(buttonInputCode);
-                            windowQUESTION.draw(buttonInputCodeText);
-                            windowQUESTION.display();
                         }
                         if (!dalmatianFound) {
                             // Первое нажатие, поздравляем с найденным Далматинцем
