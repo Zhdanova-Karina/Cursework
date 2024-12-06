@@ -9,6 +9,7 @@
 #define COUNT_LEVEL 5;
 
 using namespace sf;
+using namespace std;
 
 int main()
 {
@@ -20,7 +21,7 @@ int main()
     // Загружаем изображение меню
     Image imageMenu;
     if (!imageMenu.loadFromFile("C:/Users/Karina/Desktop/menu.png")) {
-        std::cerr << "Ошибка загрузки изображения меню" << std::endl;
+        cerr << "Ошибка загрузки изображения меню" << endl;
         return -1;
     }
 
@@ -38,7 +39,7 @@ int main()
     // Загружаем шрифт
     Font font;
     if (!font.loadFromFile("C:/Users/Karina/Desktop/Curse/font/Roboto/Roboto-Black.ttf")) {
-        std::cerr << "Ошибка загрузки шрифта" << std::endl;
+        cerr << "Ошибка загрузки шрифта" << endl;
         return -1;
     }
 
@@ -56,7 +57,7 @@ int main()
     // Загружаем изображение истории 1
     Image imageHistoryOne;
     if (!imageHistoryOne.loadFromFile("C:/Users/Karina/Desktop/Curse/img/стр 1 история.png")) {
-        std::cerr << "Ошибка загрузки изображения истории" << std::endl;
+        cerr << "Ошибка загрузки изображения истории" << endl;
         return -1;
     }
 
@@ -69,7 +70,7 @@ int main()
     // Загружаем изображение истории 2
     Image imageHistoryTwo;
     if (!imageHistoryTwo.loadFromFile("C:/Users/Karina/Desktop/Curse/img/стр 2 история.png")) {
-        std::cerr << "Ошибка загрузки изображения истории" << std::endl;
+       cerr << "Ошибка загрузки изображения истории" << endl;
         return -1;
     }
 
@@ -82,7 +83,7 @@ int main()
     // Загружаем изображение истории 3
     Image imageHistoryThree;
     if (!imageHistoryThree.loadFromFile("C:/Users/Karina/Desktop/Curse/img/стр 3 история.png")) {
-        std::cerr << "Ошибка загрузки изображения истории" << std::endl;
+        cerr << "Ошибка загрузки изображения истории" << endl;
         return -1;
     }
 
@@ -95,7 +96,7 @@ int main()
     // Загружаем изображение истории 4
     Image imageHistoryFour;
     if (!imageHistoryFour.loadFromFile("C:/Users/Karina/Desktop/Curse/img/стр 4 история.png")) {
-        std::cerr << "Ошибка загрузки изображения истории" << std::endl;
+        cerr << "Ошибка загрузки изображения истории" << endl;
         return -1;
     }
 
@@ -118,7 +119,7 @@ int main()
     // Загружаем изображение уровня №4
     Image imageLVL4;
     if (!imageLVL4.loadFromFile("C:/Users/Karina/Desktop/Curse/img/подвал.png")) {
-        std::cerr << "Ошибка загрузки изображения уровня" << std::endl;
+        cerr << "Ошибка загрузки изображения уровня" << endl;
         return -1;
     }
 
@@ -235,10 +236,10 @@ int main()
     inputText.setFillColor(Color::Black);
     inputText.setPosition(120, 72); // Позиция текста внутри поля
 
-    std::string inputString; // Логика хранения вводимого текста
+    string inputString = ""; // Логика хранения вводимого текста
     bool isInputActive = false; // Флаг для определения состояния ввода
-
-
+    string correctCode = "1996"; // Правильный код
+    Color cellColor; // Цвет ячейки
     // Переменные для отслеживания текущего состояния игры
     bool isGameStarted = false;
     Level LVL4;
@@ -322,21 +323,21 @@ int main()
                                         else if (buttonInputCode.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
                                             RenderWindow windowInputCode(VideoMode(400, 200), "Введите код!");
                                             while (windowInputCode.isOpen()) {
-                                                Event hintEvent;
-                                                while (windowInputCode.pollEvent(hintEvent)) {
-                                                    if (hintEvent.type == Event::Closed) {
+                                                Event inputEvent;
+                                                while (windowInputCode.pollEvent(inputEvent)) {
+                                                    if (inputEvent.type == Event::Closed) {
                                                         windowInputCode.close();
                                                     }
                                                     // Проверка нажатия на кнопку возврата
-                                                    if (hintEvent.type == Event::MouseButtonPressed && hintEvent.mouseButton.button == Mouse::Left) {
-                                                        Vector2i hintMousePos = Mouse::getPosition(windowInputCode); // Получаем позицию мыши для подсказки
-                                                        if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(hintMousePos))) {
+                                                    if (inputEvent.type == Event::MouseButtonPressed && inputEvent.mouseButton.button == Mouse::Left) {
+                                                        Vector2i inputMousePos = Mouse::getPosition(windowInputCode); // Получаем позицию мыши для подсказки
+                                                        if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(inputMousePos))) {
                                                             windowInputCode.close();
                                                         }
                                                     }
-                                                    else  if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                                                     if (inputEvent.type == Event::MouseButtonPressed && inputEvent.mouseButton.button == Mouse::Left) {
                                                         // Проверка, находится ли курсор в пределах inputBox
-                                                        if (inputBox.getGlobalBounds().contains(static_cast<Vector2f>(Mouse::getPosition(window)))) {
+                                                        if (inputBox.getGlobalBounds().contains(static_cast<Vector2f>(Mouse::getPosition(windowInputCode)))) {
                                                             isInputActive = true; // Активируем поле ввода
                                                         }
                                                         else {
@@ -345,15 +346,15 @@ int main()
                                                     }
 
                                                     if (isInputActive) {
-                                                            if (event.type == Event::TextEntered) {
+                                                            if (inputEvent.type == Event::TextEntered) {
                                                                 // Если вводимый символ не является Backspace
-                                                                if (event.text.unicode < 128) { // Проверяем на ASCII
-                                                                    if (event.text.unicode == '\b') { // Обработка Backspace
+                                                                if (inputEvent.text.unicode < 128) { // Проверяем на ASCII
+                                                                    if (inputEvent.text.unicode == '\b') { // Обработка Backspace
                                                                         if (!inputString.empty())
                                                                             inputString.pop_back(); // Удаляем последний символ
                                                                     }
                                                                     else {
-                                                                        inputString += static_cast<char>(event.text.unicode); // Добавление символа
+                                                                        inputString += static_cast<char>(inputEvent.text.unicode); // Добавление символа
                                                                     }
                                                                 }
                                                                 inputText.setString(inputString); // Обновляем текст
