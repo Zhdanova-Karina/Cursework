@@ -243,9 +243,8 @@ int main()
     // Переменные для отслеживания текущего состояния игры
     bool isGameStarted = false;
     Level LVL4;
-    Place cage = true;
     int place = 0;
-    bool dalmatianFound = false;
+    bool dalmatianFound;
     bool questionWindowOpened = false; // Флаг для отслеживания открытия окна с вопросом
     int currentHistoryPage = 0; // Переменная для отслеживания текущей страницы истории
     while (window.isOpen())
@@ -330,7 +329,7 @@ int main()
                                                     }
                                                     // Проверка нажатия на кнопку возврата
                                                     if (inputEvent.type == Event::MouseButtonPressed && inputEvent.mouseButton.button == Mouse::Left) {
-                                                        Vector2i inputMousePos = Mouse::getPosition(windowInputCode); // Получаем позицию мыши для подсказки
+                                                        Vector2i inputMousePos = Mouse::getPosition(windowInputCode);
                                                         if (buttonToBack.getGlobalBounds().contains(static_cast<Vector2f>(inputMousePos))) {
                                                             windowInputCode.close();
                                                         }
@@ -338,6 +337,7 @@ int main()
                                                      if (inputEvent.type == Event::MouseButtonPressed && inputEvent.mouseButton.button == Mouse::Left) {
                                                         // Проверка, находится ли курсор в пределах inputBox
                                                         if (inputBox.getGlobalBounds().contains(static_cast<Vector2f>(Mouse::getPosition(windowInputCode)))) {
+                                                            inputString.clear();
                                                             isInputActive = true; // Активируем поле ввода
                                                         }
                                                         else {
@@ -360,6 +360,19 @@ int main()
                                                                 inputText.setString(inputString); // Обновляем текст
                                                             }
                                                         }
+                                                }
+                                                if (inputEvent.type == Event::MouseButtonPressed && inputEvent.mouseButton.button == Mouse::Left) {
+                                                    Vector2i inputMousePos = Mouse::getPosition(windowInputCode); 
+                                                    if (buttonEnter.getGlobalBounds().contains(static_cast<Vector2f>(inputMousePos))) {
+                                                        if (inputString == correctCode) {
+                                                            dalmatianFound = false;
+                                                            inputBox.setFillColor(Color::Green);
+                                                        }
+                                                        else {
+                                                            dalmatianFound = true;
+                                                            inputBox.setFillColor(Color::Red);
+                                                        }
+                                                    }
                                                 }
                                                 windowInputCode.clear(Color::White);
                                                 windowInputCode.draw(buttonToBack);
