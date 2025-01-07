@@ -199,6 +199,11 @@ int main()
     buttonShapeCarpet.setTexture(&buttonTextureCarpet); // Установка текстуры в прямоугольник
     buttonShapeCarpet.setPosition(150, 450); // Установка позиции кнопки
 
+    //Создаём текст найдено:
+    Text FoundText(L"Найдено: 0", font, 25);
+    FoundText.setFillColor(Color::White); // Цвет текста
+    FoundText.setPosition(800, 600); // Позиция текста 
+
     // Загружаем изображение уровня №4
     Image imageLVL4;
     if (!imageLVL4.loadFromFile("C:/Users/Karina/Desktop/Curse/img/подвал.png")) {
@@ -326,6 +331,7 @@ int main()
     Color cellColor; // Цвет ячейки
     // Переменные для отслеживания текущего состояния игры
     Game isGameStarted = false;
+    int dalmatinCount = 0;
     Level LVL4;
     Level LVL3;
     int placeLVL3 = 0;
@@ -372,7 +378,9 @@ int main()
                         if (!Patch.getDalmatinFound()) {
                             // Первое нажатие, поздравляем с найденным Далматинцем
                             Patch = true;
+                            dalmatinCount++;
                             placeLVL3 = 1; // Устанавливаем место для отрисовки сообщения
+                            FoundText.setString(L"Найдено: " + to_wstring(dalmatinCount));
                         }
                         else {
                             // Последующие нажатия, выводим сообщение что никого нет
@@ -384,7 +392,9 @@ int main()
                         if (!Rolly.getDalmatinFound()) {
                             // Первое нажатие, поздравляем с найденным Далматинцем
                             Rolly = true;
+                            dalmatinCount++;
                             placeLVL3 = 2; // Устанавливаем место для отрисовки сообщения
+                            FoundText.setString(L"Найдено: " + to_wstring(dalmatinCount));
                         }
                         else {
                             // Последующие нажатия, выводим сообщение что никого нет
@@ -438,12 +448,14 @@ int main()
             window.draw(buttonShapeCloset);
             window.draw(buttonShapeDoor);
             window.draw(buttonShapeShelf);
+            window.draw(FoundText);
         }
         if (LVL4.getlvl()) {
             window.draw(spriteLevel_4);
             window.draw(buttonShapeCage);
             window.draw(buttonShapeBox);
             window.draw(buttonShapeBarrel);
+            window.draw(FoundText);
         }
         if (placeLVL3 == 1)
         {
@@ -456,6 +468,7 @@ int main()
             window.draw(buttonShapeShelf);
             window.draw(ShapeAnswerBed);
             window.draw(FoundedText);
+            window.draw(FoundText);
         }
         else if (placeLVL3 == 2)
         {
@@ -468,6 +481,7 @@ int main()
             window.draw(buttonShapeDoor);
             window.draw(buttonShapeShelf);
             window.draw(FoundedText);
+            window.draw(FoundText);
         }
         else if (placeLVL3 == 3)
         {
@@ -479,6 +493,7 @@ int main()
             window.draw(buttonShapeDoor);
             window.draw(buttonShapeShelf);
             window.draw(notFoundedText);
+            window.draw(FoundText);
         }
         if (placeLVL4 == 1)
         {
@@ -488,6 +503,7 @@ int main()
             window.draw(buttonShapeBarrel);
             window.draw(FoundedText);
             window.draw(ShapeAnswerCage);
+            window.draw(FoundText);
         }
         else if (placeLVL4 == 2)
         {
@@ -497,6 +513,7 @@ int main()
             window.draw(buttonShapeCage);
             window.draw(buttonShapeBarrel);
             window.draw(buttonShapeBox);
+            window.draw(FoundText);
         }
 
         window.display();
