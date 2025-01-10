@@ -349,7 +349,7 @@ int main()
 
     Dalmatin Patch=false;
     Dalmatin Rolly = false;
-    Dalmatin dalmatins = false;
+    Dalmatin Rex = false;
     bool questionWindowOpened = false; // Флаг для отслеживания открытия окна с вопросом
     int currentHistoryPage = 0; // Переменная для отслеживания текущей страницы истории
     while (window.isOpen())
@@ -512,11 +512,11 @@ int main()
                                                     Vector2i inputMousePos = Mouse::getPosition(windowInputCode);
                                                     if (buttonEnter.getGlobalBounds().contains(static_cast<Vector2f>(inputMousePos))) {
                                                         if (inputString == correctCode) {
-                                                            dalmatins = false;
+                                                            Rex = false;
                                                             inputBox.setFillColor(Color::Green);
                                                         }
                                                         else {
-                                                            dalmatins = true;
+                                                            Rex = true;
                                                             inputBox.setFillColor(Color::Red);
                                                         }
                                                     }
@@ -543,9 +543,9 @@ int main()
                                 windowQUESTION.display();
                             }
                         }
-                        if (!dalmatins.getDalmatinFound()) {
+                        if (!Rex.getDalmatinFound()) {
                             // Первое нажатие, поздравляем с найденным Далматинцем
-                            dalmatins = true;
+                            Rex = true;
                             placeLVL4 = 1; // Устанавливаем место для отрисовки сообщения
                             dalmatinCount++;
                             FoundText.setString(L"Найдено: " + to_wstring(dalmatinCount));
